@@ -1,0 +1,90 @@
+/* General Modal Styles */
+.login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.login-modal-container {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  text-align: center;
+  font-family: "Arial", sans-serif;
+}
+
+/* Close Button */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #444;
+}
+
+/* Title */
+h2 {
+  font-size: 24px;
+  color: #008080;
+  margin-bottom: 20px;
+}
+
+/* Input Group */
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+/* Submit Button */
+.submit-button {
+  background: #008080;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+
+.submit-button:hover {
+  background: #005f5f;
+}
+
+/* Toggle Text */
+.toggle-text {
+  margin-top: 15px;
+  color: #555;
+}
+
+.toggle-link {
+  color: #008080;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.toggle-link:hover {
+  color: #005f5f;
+}

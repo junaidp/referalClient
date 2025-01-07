@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReferralHub - Share & Earn Together</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">ReferralHub</div>
+            <button class="btn" onclick="openLoginModal()">Login / Sign Up</button>
+        </nav>
+    </header>
+    <section class="hero">
+        <h1>Turn Your Referral Links into Rewards</h1>
+        <p>Join our community of smart sharers who earn rewards by helping others discover great products and services.</p>
+        <button class="btn" onclick="openLoginModal()">Get Started</button>
+    </section>
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div>
+                    <h3>Sign Up and Share Your Links</h3>
+                    <p>Create an account and add your referral links from various platforms and services.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div>
+                    <h3>Others Use Your Links</h3>
+                    <p>When someone needs a referral link, they can find and use yours from our platform.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div>
+                    <h3>Earn Rewards</h3>
+                    <p>Get rewarded when people use your referral links to sign up for services or make purchases.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="features">
+        <h2>Why Choose ReferralHub?</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-link"></i></div>
+                <h3>Centralized Platform</h3>
+                <p>Keep all your referral links in one place and manage them easily.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <h3>Community Driven</h3>
+                <p>Join a community of users sharing and benefiting from referral programs.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Secure & Reliable</h3>
+                <p>Your links are safe with us, and we ensure fair distribution among users.</p>
+            </div>
+        </div>
+    </section>
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeLoginModal()">&times;</span>
+            <h2>Login to Your Account</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

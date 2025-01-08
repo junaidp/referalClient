@@ -16,9 +16,12 @@ const ReferralForm = () => {
 
   const fetchReferrals = () => {
     axios
-      .get("https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/getAllReferrals")
+      .get(
+        "https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/getAllReferrals"
+      )
       .then((response) => {
         console.log("API Response:", response.data);
+
         const data = response.data;
         setReferrals(Array.isArray(data) ? data : []); // Ensure referrals is always an array
       })
@@ -38,12 +41,17 @@ const ReferralForm = () => {
       referralLink,
       referralProvider,
       email: "user@example.com", // Replace with dynamic email if available
+      email: "me@gmail.com",
+      email: "rahimshujaat8@gmail.com",
     };
 
     axios
-      .post("https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/saveReferal", referralData)
+      .post(
+        "https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/saveReferal",
+        referralData
+      )
       .then((response) => {
-        alert("Referral saved successfully!");
+        // alert("Referral saved successfully!");
         setReferralLink(""); // Clear input fields
         setReferralProvider("");
         fetchReferrals(); // Refresh referral list

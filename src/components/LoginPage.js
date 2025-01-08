@@ -16,7 +16,7 @@ const LoginPage = () => {
     axios
       .post("https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/user/login", { email, password })
       .then((response) => {
-        alert(response.data); // "Login successful!"
+       // alert(response.data); // "Login successful!"
         localStorage.setItem("token","mock-jwt-token")
         localStorage.setItem("email",email)
         dispatch(changeToken("mock-jwt-token"));

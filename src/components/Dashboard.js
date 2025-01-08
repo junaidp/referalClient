@@ -7,11 +7,11 @@ import { useSelector } from "react-redux";
 const Dashboard = () => {
   const { token } = useSelector((state) => state.common);
   const [referrals, setReferrals] = useState([]);
-  const [editingReferral, setEditingReferral] = useState(null); // For storing the referral being edited
+  const [editingReferral, setEditingReferral] = useState(null);
   const [newReferralLink, setNewReferralLink] = useState("");
   const [newReferralProvider, setNewReferralProvider] = useState("");
   const email = localStorage.getItem("email"); // Get logged-in user email from local storage
-  console.log(token)
+
 
   useEffect(() => {
     fetchReferrals();
@@ -22,8 +22,15 @@ const Dashboard = () => {
       .get(
         `https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/getReferralsByUser?email=${email}`
       )
-      .then((response) => setReferrals(response.data))
-      .catch((err) => console.error("Failed to fetch referrals", err));
+      .then((response) => {
+        console.log("API Response:", response.data);
+        const data = response.data;
+        setReferrals(Array.isArray(data) ? data : []); // Ensure referrals is always an array
+      })
+      .catch((err) => {
+        console.error("Failed to fetch referrals", err);
+        setReferrals([]); // Fallback to an empty array
+      });
   };
 
   const handleEdit = (referral) => {
@@ -44,8 +51,8 @@ const Dashboard = () => {
         updatedData
       )
       .then(() => {
-        fetchReferrals(); // Refresh referrals after update
-        setEditingReferral(null); // Clear edit state
+        fetchReferrals();
+        setEditingReferral(null);
         alert("Referral updated successfully!");
       })
       .catch((err) => console.error("Failed to update referral", err));
@@ -59,7 +66,7 @@ const Dashboard = () => {
       axios
         .delete(`https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/deleteReferral/${id}`)
         .then(() => {
-          fetchReferrals(); // Refresh referrals after deletion
+          fetchReferrals();
           alert("Referral deleted successfully!");
         })
         .catch((err) => console.error("Failed to delete referral", err));
@@ -78,20 +85,28 @@ const Dashboard = () => {
           </tr>
         </thead>
         <tbody>
-          {referrals.map((referral) => (
-            <tr key={referral.id}>
-              <td>{referral.referralLink}</td>
-              <td>{referral.referralProvider}</td>
-              <td>
-                <button onClick={() => handleEdit(referral)}>
-                  <FaEdit /> {/* Edit icon */}
-                </button>
-                <button onClick={() => handleDelete(referral.id)}>
-                  <FaTrash /> {/* Delete icon */}
-                </button>
+          {Array.isArray(referrals) && referrals.length > 0 ? (
+            referrals.map((referral) => (
+              <tr key={referral.id}>
+                <td>{referral.referralLink}</td>
+                <td>{referral.referralProvider}</td>
+                <td>
+                  <button onClick={() => handleEdit(referral)}>
+                    <FaEdit />
+                  </button>
+                  <button onClick={() => handleDelete(referral.id)}>
+                    <FaTrash />
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="3" className="text-center">
+                No referrals found.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 
@@ -100,8 +115,8 @@ const Dashboard = () => {
           <h3>Edit Referral</h3>
           <form
             onSubmit={(e) => {
-              e.preventDefault(); // Prevent default form submission
-              handleUpdate(); // Trigger update on form submission
+              e.preventDefault();
+              handleUpdate();
             }}
           >
             <div>

@@ -3,15 +3,13 @@ import axios from "axios";
 import "./ReferralForm.css";
 import { useSelector } from "react-redux";
 
-
-
 const ReferralForm = () => {
   const [referralLink, setReferralLink] = useState("");
   const [referralProvider, setReferralProvider] = useState("");
-   const [referrals, setReferrals] = useState([]);
+  const [referrals, setReferrals] = useState([]);
   const [isTreeOpen, setIsTreeOpen] = useState(true); // Default to open
   const email = useSelector((state) => state.common.token); // Replace with decoded email from token if needed
-  // Rest of your code
+
   useEffect(() => {
     fetchReferrals(); // Fetch referral data on component load
   }, []);
@@ -20,9 +18,14 @@ const ReferralForm = () => {
     axios
       .get("https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/getAllReferrals")
       .then((response) => {
-        setReferrals(response.data);
+        console.log("API Response:", response.data);
+        const data = response.data;
+        setReferrals(Array.isArray(data) ? data : []); // Ensure referrals is always an array
       })
-      .catch((err) => console.error("Failed to fetch referrals", err));
+      .catch((err) => {
+        console.error("Failed to fetch referrals", err);
+        setReferrals([]); // Fallback to an empty array
+      });
   };
 
   const handleSave = () => {
@@ -54,7 +57,6 @@ const ReferralForm = () => {
   return (
     <div className="referral-form-container">
       <h2>Add Your Referral</h2>
-      {/* Form to add a new referral */}
       <div className="form-group">
         <label htmlFor="referral-link">Referral Link</label>
         <input
@@ -81,8 +83,6 @@ const ReferralForm = () => {
         Save
       </button>
 
-    
-      {/* Toggle button for referral Links */}
       <div
         className="tree-title"
         onClick={() => setIsTreeOpen(!isTreeOpen)}
@@ -96,7 +96,6 @@ const ReferralForm = () => {
         {isTreeOpen ? "▼ Referral Links" : "► Referral Links"}
       </div>
 
-      {/* Referral Data Grid */}
       {isTreeOpen && (
         <div className="referral-table-container">
           <table className="table table-bordered">
@@ -109,7 +108,7 @@ const ReferralForm = () => {
               </tr>
             </thead>
             <tbody>
-              {referrals.length > 0 ? (
+              {Array.isArray(referrals) && referrals.length > 0 ? (
                 referrals.map((referral) => (
                   <tr key={referral.id}>
                     <td>{referral.id || "-"}</td>
@@ -136,9 +135,7 @@ const ReferralForm = () => {
             </tbody>
           </table>
         </div>
-        
       )}
-   
     </div>
   );
 };

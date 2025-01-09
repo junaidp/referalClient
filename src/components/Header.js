@@ -7,7 +7,19 @@ const Header = ({ token, onLogout }) => {
   return (
     <header className="header">
       <nav className="nav">
-        <div className="logo">ReferralHub</div>
+        <div
+          className="logo"
+          onClick={() => {
+            if (token) {
+              navigate("/referral");
+            } else {
+              navigate("/");
+            }
+          }}
+          style={{ cursor: "pointer" }}
+        >
+          ReferralHub
+        </div>
         <div>
           {!token && (
             <>

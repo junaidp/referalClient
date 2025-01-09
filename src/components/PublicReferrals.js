@@ -1,27 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './PublicReferrals.css';
-import baseUrl from './baseUrl'; // Import the centralized base URL
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./PublicReferrals.css";
+import baseUrl from "./baseUrl"; // Import the centralized base URL
 
 const PublicReferrals = () => {
   const [referrals, setReferrals] = useState([]);
-  const [loading, setLoading] = useState(true);  // To handle loading state
+  const [loading, setLoading] = useState(true); // To handle loading state
 
   useEffect(() => {
     fetchPublicReferrals();
   }, []);
 
   const fetchPublicReferrals = () => {
-    setLoading(true);  // Set loading to true when fetching
+    setLoading(true); // Set loading to true when fetching
     axios
-      .get(`${baseUrl}/controller/getAllReferrals`) // Centralized API URL
+      .get(`${baseUrl}/controller/getAllReferrals`, {
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      }) // Centralized API URL
       .then((response) => {
-        console.log('API Response:', response); // Debugging API response
+        console.log("API Response:", response); // Debugging API response
         const data = response.data;
         setReferrals(Array.isArray(data) ? data : []); // Ensure referrals is always an array
       })
       .catch((err) => {
-        console.error('Failed to fetch public referrals:', err);
+        console.error("Failed to fetch public referrals:", err);
         setReferrals([]); // Fallback to an empty array in case of error
       })
       .finally(() => setLoading(false)); // Set loading to false after the request completes
@@ -30,7 +34,7 @@ const PublicReferrals = () => {
   return (
     <div className="public-referrals">
       <h2>Explore Referral Links</h2>
-      {loading ? (  // Show loading state if data is being fetched
+      {loading ? ( // Show loading state if data is being fetched
         <p>Loading referrals...</p>
       ) : (
         <table className="referrals-table">
@@ -55,7 +59,7 @@ const PublicReferrals = () => {
                     </a>
                   </td>
                   <td>{referral.referralProvider}</td>
-                  <td>{referral.email || 'Anonymous'}</td>
+                  <td>{referral.email || "Anonymous"}</td>
                 </tr>
               ))
             ) : (

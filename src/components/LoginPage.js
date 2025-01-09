@@ -15,7 +15,15 @@ const LoginPage = () => {
 
   const handleLogin = (email, password) => {
     axios
-      .post(`${baseUrl}/user/login`, { email, password }) // Use the imported base URL
+      .post(
+        `${baseUrl}/user/login`,
+        { email, password },
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
+      ) // Use the imported base URL
       .then((response) => {
         console.log("Login successful", response.data);
         localStorage.setItem("token", "mock-jwt-token"); // Save mock token
@@ -31,7 +39,15 @@ const LoginPage = () => {
 
   const handleSignup = (email, password) => {
     axios
-      .post(`${baseUrl}/user/register`, { email, password }) // Use the imported base URL
+      .post(
+        `${baseUrl}/user/register`,
+        { email, password },
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
+      ) // Use the imported base URL
       .then((response) => {
         alert("User registered successfully!"); // Notify user
         navigate("/referral"); // Redirect to referral form

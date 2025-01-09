@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ReferralForm.css";
 import { useSelector } from "react-redux";
-import baseUrl from './baseUrl';
+import baseUrl from "./baseUrl";
 
 const ReferralForm = () => {
   const [referralLink, setReferralLink] = useState("");
@@ -20,7 +20,11 @@ const ReferralForm = () => {
   const fetchReferrals = () => {
     setLoading(true);
     axios
-      .get(`${baseUrl}/controller/getAllReferrals`) // Use baseUrl dynamically
+      .get(`${baseUrl}/controller/getAllReferrals`, {
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      }) // Use baseUrl dynamically
       .then((response) => {
         setReferrals(Array.isArray(response.data) ? response.data : []);
       })
@@ -36,7 +40,7 @@ const ReferralForm = () => {
       alert("Please fill in both fields.");
       return;
     }
-  
+
     const referralData = {
       referralLink,
       referralProvider,
@@ -45,11 +49,15 @@ const ReferralForm = () => {
       email: email || "rahimshujaat8@gmail.com",
       email: email || "g@gmail.com",
     };
-  
+
     axios
-      .post(`${baseUrl}/controller/saveReferal`, referralData) // Use baseUrl dynamically
+      .post(`${baseUrl}/controller/saveReferal`, referralData, {
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      }) // Use baseUrl dynamically
       .then((response) => {
-       // alert("Referral saved successfully!");
+        // alert("Referral saved successfully!");
         setReferralLink(""); // Clear input fields
         setReferralProvider("");
         fetchReferrals(); // Refresh referrals after saving
@@ -59,8 +67,6 @@ const ReferralForm = () => {
         alert("Failed to save referral.");
       });
   };
-  
-
 
   return (
     <div className="referral-form-container">

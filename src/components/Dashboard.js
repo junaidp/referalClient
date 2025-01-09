@@ -10,7 +10,10 @@ const Dashboard = () => {
   const email = localStorage.getItem("email"); // Get email from local storage
   const [referrals, setReferrals] = useState([]);
   const [editingReferral, setEditingReferral] = useState(null);
-  const [formData, setFormData] = useState({ referralLink: "", referralProvider: "" });
+  const [formData, setFormData] = useState({
+    referralLink: "",
+    referralProvider: "",
+  });
 
   useEffect(() => {
     fetchReferrals();
@@ -18,7 +21,11 @@ const Dashboard = () => {
 
   const fetchReferrals = () => {
     axios
-      .get(`${baseUrl}/controller/getReferralsByUser?email=${email}`)
+      .get(`${baseUrl}/controller/getReferralsByUser?email=${email}`, {
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      })
       .then((response) => {
         const data = response.data;
         setReferrals(Array.isArray(data) ? data : []);
@@ -38,7 +45,15 @@ const Dashboard = () => {
     if (!editingReferral) return;
 
     axios
-      .put(`${baseUrl}/controller/updateReferral/${editingReferral.id}`, formData)
+      .put(
+        `${baseUrl}/controller/updateReferral/${editingReferral.id}`,
+        formData,
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
+      )
       .then(() => {
         alert("Referral updated successfully!");
         fetchReferrals();
@@ -50,7 +65,11 @@ const Dashboard = () => {
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this referral?")) {
       axios
-        .delete(`${baseUrl}/controller/deleteReferral/${id}`)
+        .delete(`${baseUrl}/controller/deleteReferral/${id}`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        })
         .then(() => {
           alert("Referral deleted successfully!");
           fetchReferrals();
@@ -75,7 +94,11 @@ const Dashboard = () => {
             referrals.map((referral) => (
               <tr key={referral.id}>
                 <td>
-                  <a href={referral.referralLink} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={referral.referralLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     {referral.referralLink}
                   </a>
                 </td>
@@ -114,7 +137,9 @@ const Dashboard = () => {
               <input
                 type="text"
                 value={formData.referralLink}
-                onChange={(e) => setFormData({ ...formData, referralLink: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, referralLink: e.target.value })
+                }
                 required
               />
             </div>
@@ -123,7 +148,9 @@ const Dashboard = () => {
               <input
                 type="text"
                 value={formData.referralProvider}
-                onChange={(e) => setFormData({ ...formData, referralProvider: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, referralProvider: e.target.value })
+                }
                 required
               />
             </div>

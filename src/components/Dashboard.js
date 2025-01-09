@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons
-import "./Dashboard.css";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import baseUrl from "./baseUrl";
+import "./Dashboard.css";
 
 const Dashboard = () => {
   const { token } = useSelector((state) => state.common);
+  const email = localStorage.getItem("email"); // Get email from local storage
   const [referrals, setReferrals] = useState([]);
   const [editingReferral, setEditingReferral] = useState(null);
-  const [newReferralLink, setNewReferralLink] = useState("");
-  const [newReferralProvider, setNewReferralProvider] = useState("");
-  const email = localStorage.getItem("email"); // Get logged-in user email from local storage
-
+  const [formData, setFormData] = useState({ referralLink: "", referralProvider: "" });
 
   useEffect(() => {
     fetchReferrals();
@@ -19,55 +18,42 @@ const Dashboard = () => {
 
   const fetchReferrals = () => {
     axios
-      .get(
-        `https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/getReferralsByUser?email=${email}`
-      )
+      .get(`${baseUrl}/controller/getReferralsByUser?email=${email}`)
       .then((response) => {
-        console.log("API Response:", response.data);
         const data = response.data;
-        setReferrals(Array.isArray(data) ? data : []); // Ensure referrals is always an array
+        setReferrals(Array.isArray(data) ? data : []);
       })
-      .catch((err) => {
-        console.error("Failed to fetch referrals", err);
-        setReferrals([]); // Fallback to an empty array
-      });
+      .catch((err) => console.error("Failed to fetch referrals", err));
   };
 
   const handleEdit = (referral) => {
     setEditingReferral(referral);
-    setNewReferralLink(referral.referralLink);
-    setNewReferralProvider(referral.referralProvider);
+    setFormData({
+      referralLink: referral.referralLink,
+      referralProvider: referral.referralProvider,
+    });
   };
 
   const handleUpdate = () => {
-    const updatedData = {
-      referralLink: newReferralLink,
-      referralProvider: newReferralProvider,
-    };
+    if (!editingReferral) return;
 
     axios
-      .put(
-        `https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/updateReferral/${editingReferral.id}`,
-        updatedData
-      )
+      .put(`${baseUrl}/controller/updateReferral/${editingReferral.id}`, formData)
       .then(() => {
+        alert("Referral updated successfully!");
         fetchReferrals();
         setEditingReferral(null);
-        alert("Referral updated successfully!");
       })
       .catch((err) => console.error("Failed to update referral", err));
   };
 
   const handleDelete = (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this referral?"
-    );
-    if (confirmDelete) {
+    if (window.confirm("Are you sure you want to delete this referral?")) {
       axios
-        .delete(`https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/deleteReferral/${id}`)
+        .delete(`${baseUrl}/controller/deleteReferral/${id}`)
         .then(() => {
-          fetchReferrals();
           alert("Referral deleted successfully!");
+          fetchReferrals();
         })
         .catch((err) => console.error("Failed to delete referral", err));
     }
@@ -80,15 +66,19 @@ const Dashboard = () => {
         <thead>
           <tr>
             <th>Referral Link</th>
-            <th>Referral Provider</th>
+            <th>Provider</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(referrals) && referrals.length > 0 ? (
+          {referrals.length > 0 ? (
             referrals.map((referral) => (
               <tr key={referral.id}>
-                <td>{referral.referralLink}</td>
+                <td>
+                  <a href={referral.referralLink} target="_blank" rel="noopener noreferrer">
+                    {referral.referralLink}
+                  </a>
+                </td>
                 <td>{referral.referralProvider}</td>
                 <td>
                   <button onClick={() => handleEdit(referral)}>
@@ -123,17 +113,17 @@ const Dashboard = () => {
               <label>Referral Link:</label>
               <input
                 type="text"
-                value={newReferralLink}
-                onChange={(e) => setNewReferralLink(e.target.value)}
+                value={formData.referralLink}
+                onChange={(e) => setFormData({ ...formData, referralLink: e.target.value })}
                 required
               />
             </div>
             <div>
-              <label>Referral Provider:</label>
+              <label>Provider:</label>
               <input
                 type="text"
-                value={newReferralProvider}
-                onChange={(e) => setNewReferralProvider(e.target.value)}
+                value={formData.referralProvider}
+                onChange={(e) => setFormData({ ...formData, referralProvider: e.target.value })}
                 required
               />
             </div>

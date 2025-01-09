@@ -2,33 +2,33 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ReferralForm.css";
 import { useSelector } from "react-redux";
+import baseUrl from './baseUrl';
 
 const ReferralForm = () => {
   const [referralLink, setReferralLink] = useState("");
   const [referralProvider, setReferralProvider] = useState("");
   const [referrals, setReferrals] = useState([]);
-  const [isTreeOpen, setIsTreeOpen] = useState(true); // Default to open
-  const email = useSelector((state) => state.common.token); // Replace with decoded email from token if needed
+  const [isTreeOpen, setIsTreeOpen] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const email = useSelector((state) => state.common.email); // Get dynamic email from Redux
 
   useEffect(() => {
-    fetchReferrals(); // Fetch referral data on component load
+    fetchReferrals();
   }, []);
 
   const fetchReferrals = () => {
+    setLoading(true);
     axios
-      .get(
-        "https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/getAllReferrals"
-      )
+      .get(`${baseUrl}/controller/getAllReferrals`) // Use baseUrl dynamically
       .then((response) => {
-        console.log("API Response:", response.data);
-
-        const data = response.data;
-        setReferrals(Array.isArray(data) ? data : []); // Ensure referrals is always an array
+        setReferrals(Array.isArray(response.data) ? response.data : []);
       })
       .catch((err) => {
         console.error("Failed to fetch referrals", err);
         setReferrals([]); // Fallback to an empty array
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const handleSave = () => {
@@ -36,31 +36,31 @@ const ReferralForm = () => {
       alert("Please fill in both fields.");
       return;
     }
-
+  
     const referralData = {
       referralLink,
       referralProvider,
-      email: "user@example.com", // Replace with dynamic email if available
-      email: "me@gmail.com",
-      email: "rahimshujaat8@gmail.com",
+      email: email || "me@gmail.com", // Use dynamic email or fallback to a default
+      email: email || "user@example.com",
+      email: email || "rahimshujaat8@gmail.com",
+      email: email || "g@gmail.com",
     };
-
+  
     axios
-      .post(
-        "https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/controller/saveReferal",
-        referralData
-      )
+      .post(`${baseUrl}/controller/saveReferal`, referralData) // Use baseUrl dynamically
       .then((response) => {
-        // alert("Referral saved successfully!");
+       // alert("Referral saved successfully!");
         setReferralLink(""); // Clear input fields
         setReferralProvider("");
-        fetchReferrals(); // Refresh referral list
+        fetchReferrals(); // Refresh referrals after saving
       })
       .catch((err) => {
         console.error("Failed to save referral", err);
         alert("Failed to save referral.");
       });
   };
+  
+
 
   return (
     <div className="referral-form-container">
@@ -106,42 +106,46 @@ const ReferralForm = () => {
 
       {isTreeOpen && (
         <div className="referral-table-container">
-          <table className="table table-bordered">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Referral Link</th>
-                <th>Referral Provider</th>
-                <th>Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.isArray(referrals) && referrals.length > 0 ? (
-                referrals.map((referral) => (
-                  <tr key={referral.id}>
-                    <td>{referral.id || "-"}</td>
-                    <td>
-                      <a
-                        href={referral.referralLink || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {referral.referralLink || "-"}
-                      </a>
-                    </td>
-                    <td>{referral.referralProvider || "-"}</td>
-                    <td>{referral.email || "-"}</td>
-                  </tr>
-                ))
-              ) : (
+          {loading ? (
+            <p>Loading referrals...</p>
+          ) : (
+            <table className="table table-bordered">
+              <thead>
                 <tr>
-                  <td colSpan="4" className="text-center">
-                    No referral data available
-                  </td>
+                  <th>ID</th>
+                  <th>Referral Link</th>
+                  <th>Referral Provider</th>
+                  <th>Email</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {Array.isArray(referrals) && referrals.length > 0 ? (
+                  referrals.map((referral) => (
+                    <tr key={referral.id}>
+                      <td>{referral.id || "-"}</td>
+                      <td>
+                        <a
+                          href={referral.referralLink || "#"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {referral.referralLink || "-"}
+                        </a>
+                      </td>
+                      <td>{referral.referralProvider || "-"}</td>
+                      <td>{referral.email || "-"}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="text-center">
+                      No referral data available
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       )}
     </div>

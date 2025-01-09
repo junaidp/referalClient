@@ -4,6 +4,7 @@ import LoginModal from "./LoginModal";
 import { useNavigate } from "react-router-dom";
 import { changeToken } from "../reducers/common";
 import { useDispatch } from "react-redux";
+import baseUrl from "./baseUrl"; // Import the base URL
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -14,12 +15,12 @@ const LoginPage = () => {
 
   const handleLogin = (email, password) => {
     axios
-      .post("https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/user/login", { email, password })
+      .post(`${baseUrl}/user/login`, { email, password }) // Use the imported base URL
       .then((response) => {
-       // alert(response.data); // "Login successful!"
-        localStorage.setItem("token","mock-jwt-token")
-        localStorage.setItem("email",email)
-        dispatch(changeToken("mock-jwt-token"));
+        console.log("Login successful", response.data);
+        localStorage.setItem("token", "mock-jwt-token"); // Save mock token
+        localStorage.setItem("email", email); // Save email
+        dispatch(changeToken("mock-jwt-token")); // Dispatch token to Redux store
         navigate("/referral"); // Redirect to referral form
       })
       .catch((err) => {
@@ -30,9 +31,9 @@ const LoginPage = () => {
 
   const handleSignup = (email, password) => {
     axios
-      .post("https://2660-2a0a-a547-f2a0-0-b8ae-d478-c531-347d.ngrok-free.app/api/user/register", { email, password })
+      .post(`${baseUrl}/user/register`, { email, password }) // Use the imported base URL
       .then((response) => {
-        alert(response.data); // "User registered successfully!"
+        alert("User registered successfully!"); // Notify user
         navigate("/referral"); // Redirect to referral form
       })
       .catch((err) => {

@@ -6,6 +6,7 @@ import baseUrl from "./baseUrl"; // Import the centralized base URL
 const PublicReferrals = () => {
   const [referrals, setReferrals] = useState([]);
   const [loading, setLoading] = useState(true); // To handle loading state
+  const [randomUserEmail, setRandomUserEmail] = useState(null); // Randomly chosen user's email
 
   useEffect(() => {
     fetchPublicReferrals();
@@ -22,13 +23,42 @@ const PublicReferrals = () => {
       .then((response) => {
         console.log("API Response:", response); // Debugging API response
         const data = response.data;
-        setReferrals(Array.isArray(data) ? data : []); // Ensure referrals is always an array
+        if (Array.isArray(data) && data.length > 0) {
+          const uniqueEmails = [...new Set(data.map((referral) => referral.email))];
+          const randomEmail =
+            uniqueEmails[Math.floor(Math.random() * uniqueEmails.length)];
+          setRandomUserEmail(randomEmail); // Randomly choose a user's email
+          const sortedReferrals = prioritizeReferrals(data, randomEmail);
+          setReferrals(sortedReferrals); // Ensure referrals are sorted before rendering
+        } else {
+          setReferrals([]); // Fallback to an empty array
+        }
       })
       .catch((err) => {
         console.error("Failed to fetch public referrals:", err);
         setReferrals([]); // Fallback to an empty array in case of error
       })
       .finally(() => setLoading(false)); // Set loading to false after the request completes
+  };
+
+  const prioritizeReferrals = (data, randomEmail) => {
+    // Separate referrals by the randomly chosen user and others
+    const randomUserReferrals = data.filter(
+      (referral) => referral.email === randomEmail
+    );
+    const otherUserReferrals = data.filter(
+      (referral) => referral.email !== randomEmail
+    );
+
+    // Decide which referrals should appear at the top based on 90%-10% probability
+    const shouldPrioritizeRandomUser =
+      Math.random() < 0.9; // 90% chance to prioritize the selected user's referrals
+
+    if (shouldPrioritizeRandomUser) {
+      return [...randomUserReferrals, ...otherUserReferrals];
+    } else {
+      return [...otherUserReferrals, ...randomUserReferrals];
+    }
   };
 
   return (
